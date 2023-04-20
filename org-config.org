@@ -549,6 +549,10 @@ encryption of journal files (uses org-crypt).
   (setq org-journal-dir "~/org/dailies/")
   (setq org-journal-enable-encryption nil)
 #+END_SRC
+* PDF tools
+  #+begin_src elisp :tangle org-config.el
+
+  #+end_src
 
 *  MU4E
   :PROPERTIES:
