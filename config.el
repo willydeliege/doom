@@ -11,9 +11,31 @@
 ;; set more convient *leader keys
 (setq doom-leader-alt-key "M-;")
 (setq doom-localleader-key ";")
+;; Beter pasting from system clipboard
+(defun my/paste-above ()
+  "Paste above current line with preserving indentation."
+  (interactive)
+  (let ((indent (current-indentation))
+        (column (current-column)))
+    (evil-insert-newline-above)
+    (indent-to indent)
+    (evil-paste-after 1)
+    (move-to-column column)))
+(map! :n :desc "Paste above" "[p" #'my/paste-above)
+
+(defun my/paste-below ()
+  "Paste below current line with preserving indentation."
+  (interactive)
+  (let ((indent (current-indentation))
+        (column (current-column)))
+    (evil-insert-newline-below)
+    (indent-to indent)
+    (evil-paste-after 1)
+    (move-to-column column)))
+(map! :n :desc "Paste below" "]p" #'my/paste-below)
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
-;;
+
 ;; + `doom-font'
 ;; + `doom-variable-pitch-font'
 ;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
@@ -86,15 +108,6 @@
 (use-package! org-pomodoro
   :after org)
 
-
-(use-package! yasnippet
-  :hook (lsp-mode . yas-minor-mode))
-
-(use-package! python-black
-  :demand t
-  :after python
-  :hook (python-mode . python-black-on-save-mode-enable-dwim))
-
 (use-package! flycheck
   :commands global-flycheck-mode
   :preface
@@ -161,7 +174,12 @@
         '(("tex" . "kpsewhich -format=.tex %f")
           ("bib" . "kpsewhich -format=.bib %f")))
 (setq bibtex-completion-pdf-field "file")
+(map! :leader :desc "Capture" "X" #'org-roam-dailies-capture-today)
 
+;; Discover projects in the repo dir
+(after! projectile
+  (setq projectile-project-search-path '(("~/repos" . 2))
+        projectile-sort-order 'recentf ))
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 (defun my/cleanup-text-mode ()
   (setq fill-column 80)
