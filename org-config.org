@@ -521,6 +521,13 @@ You'll find the  exported notes on [[https://hugocisneros.com/notes/][my notes p
     )
   (setq org-id-extra-files (org-roam--list-files org-roam-directory))
 #+END_SRC
+* Org Journal
+  As first attempt don't use the built journal capture but the one from org-roam-dailies
+  #+begin_src elisp :tangle org-config.el
+(setq org-journal-dir "~/org/daily/")
+(setq org-journal-file-format "%Y-%m-%d.org")
+(setq org-journal-date-format "%A, %d %B %Y")
+  #+end_src
 
 * Org Caldav
 :PROPERTIES:
