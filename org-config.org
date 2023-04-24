@@ -596,6 +596,41 @@ encryption of journal files (uses org-crypt).
            (:maildir "/all"   :key ?a))))
 
   #+end_src
+
+** Improve Capture
+#+begin_src elisp :tangle org-config.el
+(after! org
+  (add-to-list 'org-capture-templates
+               '("m" "Email Workflow") t)
+  (add-to-list 'org-capture-templates
+               '("mf" "Follow Up" entry (file+olp "~/org/Inbox.org" "Follow Up")
+                 "* TODO Follow up with %:fromname on %a\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n\n%i" :immediate-finish t))
+  (add-to-list 'org-capture-templates
+               '("mr" "Read Later" entry (file+olp "~/org/Inbox.org" "Read Later")
+                 "* TODO Read %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n\n%a\n\n%i" :immediate-finish t))
+  )
+(defun my/capture-mail-follow-up (msg)
+  (interactive)
+  (call-interactively 'org-store-link)
+  (org-capture nil "mf"))
+
+(defun my/capture-mail-read-later (msg)
+  (interactive)
+  (call-interactively 'org-store-link)
+  (org-capture nil "mr"))
+
+;; Add custom actions for the capture templates
+(after! mu4e
+  (add-to-list 'mu4e-headers-actions
+               '("follow up" . my/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-view-actions
+               '("follow up" . my/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-headers-actions
+               '("read later" . my/capture-mail-read-later) t)
+  (add-to-list 'mu4e-view-actions
+               '("read later" . my/capture-mail-read-later) t))
+#+end_src
+
 * Spelling
   :PROPERTIES:
 :ID: ca0aa766-1d52-40b8-9569-92e57adfbfa6
