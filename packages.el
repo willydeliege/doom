@@ -47,8 +47,7 @@
 ;; ...or multiple packages
 ;(unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
-;(unpin! t)
-(package! helm)
+(unpin! t)
 (package! evil-escape)
 (package! evil-surround)
 (package! ef-themes  :recipe (:host github :repo "protesilaos/ef-themes"))
@@ -59,7 +58,6 @@
 ;; (unpin! evil-collection)
 ;; (package! evil-collection :recipe (:host github :repo "meliache/evil-collection" :branch "mu4e-development"))
 (package! org-ref)
-(package! helm-bibtex)
 ;; (package! org-ref-cite :recipe (:host github
                                 ;; :repo "jkitchin/org-ref-cite"))
 (package! org-super-agenda)
@@ -70,9 +68,9 @@
 (package! org-pdftools)
 (package! org-modern)
 ;; (package! org-plus-contrib)
-(package! helm-org)
-
-(package! lsp-pyright)
-(package! python-black)
-(package! flycheck-grammarly)
-(package! wgsl-mode)
+(package! org-vcard)
+(package! color-theme-sanityinc-tomorrow)
+(package! spacemacs-theme)
+(package! nano-emacs :recipe (:host github :repo "rougier/nano-emacs"))
+(package! svg-tag-mode)
+(package! mu4e-dashboard :recipe (:host github :repo "rougier/mu4e-dashboard"))
