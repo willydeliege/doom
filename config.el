@@ -8,10 +8,16 @@
 ;; clients, file templates and snippets.
 (setq user-full-name "Frédéric Willem"
       user-mail-address "frederic.willem@gmail.com")
+
 ;; set more convient *leader keys
-(setq doom-leader-alt-key "M-;")
 (setq doom-localleader-key ";")
-;; Beter pasting from system clipboard
+(setq doom-localleader-alt-key "M-;")
+(setq org-ellipsis " ")
+;; save when exit insert mode
+(add-hook 'evil-insert-state-exit-hook
+          (lambda ()
+            (call-interactively #'save-buffer)))
+;; Beter pasting from system clipboarr
 (defun my/paste-above ()
   "Paste above current line with preserving indentation."
   (interactive)
@@ -21,8 +27,7 @@
     (indent-to indent)
     (evil-paste-after 1)
     (move-to-column column)))
-(map! :n :desc "Paste above" "[p" #'my/paste-above)
-
+(map!  :desc "Paste above" :n "[p" #'my/paste-above)
 (defun my/paste-below ()
   "Paste below current line with preserving indentation."
   (interactive)
@@ -32,7 +37,8 @@
     (indent-to indent)
     (evil-paste-after 1)
     (move-to-column column)))
-(map! :n :desc "Paste below" "]p" #'my/paste-below)
+(map! :desc "Paste below" :n "]p" #'my/paste-below)
+
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
 
@@ -43,13 +49,14 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "Meslo LG S for Powerline" :size 14))
+;; (setq doom-font (font-spec :family "Meslo LG S for Powerline" :size 14))
 ;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(load-theme 'ef-deuteranopia-dark t)
+;; (load-theme 'leuven t)
+(setq doom-theme 'leuven)
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
@@ -88,9 +95,6 @@
   :config
   (global-evil-surround-mode 1))
 
-(after! org-roam
-  (setq org-roam-directory (expand-file-name org-directory))
-)
 (use-package! ox-hugo
   :after ox)
 (use-package! org-ref
@@ -121,7 +125,6 @@
   :bind (:map flycheck-mode-map
               ("C-c e" . flycheck-list-errors)))
 
-(use-package! wgsl-mode)
 
 (add-hook 'org-cycle-hook 'org-cycle-hide-drawers)
 

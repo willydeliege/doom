@@ -352,23 +352,15 @@
         message-send-mail-function #'message-send-mail-with-sendmail)
   ;; set a more visible mu4e view (with dark-mode enabled)
   (setq shr-color-visible-luminance-min 01)
-  ;; don't need to run cleanup after indexing for gmail
-  (setq mu4e-index-cleanup nil
-        ;; because gmail uses labels as folders we can use lazy check since
-        ;; messages don't really "move"
-        mu4e-index-lazy-check t)
-  ;; enable inline image
-  ;; enable inline image
-  (setq mu4e-view-show-images t)
   ;; use imagemagick, if available
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
   (setq mu4e-update-interval 60)
   (setq mu4e-maildir-shortcuts
         '( (:maildir "/INBOX" :key ?i)
-           (:maildir "/sent"  :key ?s)
-           (:maildir "/trash" :key ?t)
-           (:maildir "/all"   :key ?a))))
+           (:maildir "/[Gmail]/Sent Mail"  :key ?s)
+           (:maildir "/[Gmail]/Trash" :key ?t)
+           (:maildir "/[Gmail/All Mail]"   :key ?a))))
 
 (with-eval-after-load "ispell"
 ;; (after! flyspell-lazy
@@ -385,3 +377,4 @@
 (add-hook 'markdown-mode-hook 'my/buffer-face-mode-variable)
 
 (setq org-return-follows-link t)
+(setq org-mobile-directory "~/webdav")
