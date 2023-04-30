@@ -360,7 +360,7 @@
         '( (:maildir "/INBOX" :key ?i)
            (:maildir "/[Gmail]/Sent Mail"  :key ?s)
            (:maildir "/[Gmail]/Trash" :key ?t)
-           (:maildir "/[Gmail/All Mail]"   :key ?a))))
+           (:maildir "/[Gmail]/All Mail"   :key ?a))))
 
 (with-eval-after-load "ispell"
 ;; (after! flyspell-lazy
