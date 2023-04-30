@@ -8,7 +8,20 @@
 ;; clients, file templates and snippets.
 (setq user-full-name "Frédéric Willem"
       user-mail-address "frederic.willem@gmail.com")
-
+(use-package! dashboard
+  :ensure t
+  :init (dashboard-setup-startup-hook)
+  :config
+  (require 'dashboard)
+  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-project-backend 'projectile)
+  (setq dashboard-items '((recents . 5)
+                          (bookmarks . 5)
+                          (projects . 5)
+                          (agenda . 5)
+                          (registers . 5)
+                          )))
 ;; set more convient *leader keys
 (setq doom-localleader-key ";")
 (setq doom-localleader-alt-key "M-;")
@@ -56,7 +69,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; (load-theme 'leuven t)
-(setq doom-theme 'leuven)
+(setq doom-theme 'doom-homage-black)
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")

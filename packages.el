@@ -74,3 +74,4 @@
 (package! nano-emacs :recipe (:host github :repo "rougier/nano-emacs"))
 (package! svg-tag-mode)
 (package! mu4e-dashboard :recipe (:host github :repo "rougier/mu4e-dashboard"))
+(package! dashboard)
