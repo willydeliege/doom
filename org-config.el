@@ -1,4 +1,4 @@
-;;; -*- mode: Lisp; lexical-binding: t; -*-
+;;; org-config.el -*- lexical-binding: t; -*-
 
 (setq browse-url-browser-function 'browse-url-generic)
 (setq browse-url-generic-program  "google-chrome-stable")
@@ -378,6 +378,35 @@ capture was not aborted."
   )
 (setq org-id-extra-files (org-roam--list-files org-roam-directory))
 
+(map! :leader
+      :desc "Find roam node" "fn" #'org-roam-node-find)
+(map! :leader
+      :desc "Roam project" "pr" #'my/org-roam-find-project)
+(map! :leader
+      (:prefix ("r" . "roam")
+       :desc "Open random node"           "a" #'org-roam-node-random
+       :desc "Find node"                  "f" #'org-roam-node-find
+       :desc "Find ref"                   "F" #'org-roam-ref-find
+       :desc "Show graph"                 "g" #'org-roam-graph
+       :desc "Insert node"                "i" #'org-roam-node-insert
+       :desc "Capture to node"            "n" #'org-roam-capture
+       :desc "Toggle roam buffer"         "r" #'org-roam-buffer-toggle
+       :desc "Launch roam buffer"         "R" #'org-roam-buffer-display-dedicated
+       :desc "Sync database"              "s" #'org-roam-db-sync
+       (:prefix ("d" . "by date")
+        :desc "Goto previous note"        "b" #'org-roam-dailies-goto-previous-note
+        :desc "Goto date"                 "d" #'org-roam-dailies-goto-date
+        :desc "Capture date"              "D" #'org-roam-dailies-capture-date
+        :desc "Goto next note"            "f" #'org-roam-dailies-goto-next-note
+        :desc "Goto tomorrow"             "m" #'org-roam-dailies-goto-tomorrow
+        :desc "Capture tomorrow"          "M" #'org-roam-dailies-capture-tomorrow
+        :desc "Capture today"             "n" #'org-roam-dailies-capture-today
+        :desc "Goto today"                "t" #'org-roam-dailies-goto-today
+        :desc "Capture today"             "T" #'org-roam-dailies-capture-today
+        :desc "Goto yesterday"            "y" #'org-roam-dailies-goto-yesterday
+        :desc "Capture yesterday"         "Y" #'org-roam-dailies-capture-yesterday
+        :desc "Find directory"            "-" #'org-roam-dailies-find-directory)))
+
 (defun my/caldav-sync-perso ()
   "Sync my local calendar in ~/org/calendar.org with my remote calendar"
   (interactive)
@@ -389,7 +418,6 @@ capture was not aborted."
 
 (setq org-journal-dir "~/org/dailies/")
 (setq org-journal-enable-encryption nil)
-
 ;; path where mu4e is installed
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa-src/mu4e-1.8.14")
 ;; sending mails with msmtp
