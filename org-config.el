@@ -420,7 +420,36 @@ capture was not aborted."
            (:maildir "/[Gmail]/Sent Mail"  :key ?S)
            (:maildir "/[Gmail]/Trash" :key ?t)
            (:maildir "/[Gmail]/Starred" :key ?s)
-           (:maildir "/[Gmail]/All Mail"   :key ?a))))
+           (:maildir "/[Gmail]/All Mail"   :key ?a)))
+
+  (setq org-capture-templates
+        `(("m" "Email Workflow")
+          ("mf" "Follow Up" entry (file+olp "~/org/Inbox.org" "Follow Up")
+                "* TODO Follow up with %:fromname on %a\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n\n%i" :immediate-finish t)
+          ("mr" "Read Later" entry (file+olp "~/org/Inbox.org" "Read Later")
+                "* TODO Read %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n\n%a\n\n%i" :immediate-finish t)))
+
+  (defun efs/capture-mail-follow-up (msg)
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "mf"))
+
+  (defun efs/capture-mail-read-later (msg)
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "mr"))
+
+  ;; Add custom actions for our capture templates
+  (add-to-list 'mu4e-headers-actions
+               '("follow up" . efs/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-view-actions
+               '("follow up" . efs/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-headers-actions
+               '("read later" . efs/capture-mail-read-later) t)
+  (add-to-list 'mu4e-view-actions
+               '("read later" . efs/capture-mail-read-later) t)
+
+  )
 
 (with-eval-after-load "ispell"
   ;; (after! flyspell-lazy
