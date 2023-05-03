@@ -16,6 +16,11 @@
   '(doom-dashboard-loaded :inherit font-lock-warning-face)
   '(doom-dashboard-menu-desc :inherit font-lock-string-face)
   '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
+
+(custom-set-faces!
+  '(aw-leading-char-face
+    :foreground "white" :background "red"
+    :weight bold :height 2.5 :box (:line-width 10 :color "red")))
 (setq doom-localleader-key ";")
 (setq doom-localleader-alt-key "M-;")
 (setq org-ellipsis " ")
@@ -63,7 +68,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; (load-theme 'leuven t)
-(setq doom-theme 'doom-monokai-machine)
+(setq doom-theme 'doom-ir-black)
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
