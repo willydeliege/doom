@@ -7,20 +7,20 @@
       doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
 (setq org-todo-keywords
-    (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
 
-  (setq-default org-enforce-todo-dependencies t)
+(setq-default org-enforce-todo-dependencies t)
 
 (setq org-todo-keyword-faces
-    (quote (("TODO" :foreground "red" :weight bold)
-            ("NEXT" :foreground "blue" :weight bold)
-            ("DONE" :foreground "forest green" :weight bold)
-            ("WAITING" :foreground "orange" :weight bold)
-            ("HOLD" :foreground "magenta" :weight bold)
-            ("CANCELLED" :foreground "forest green" :weight bold)
-            ("MEETING" :foreground "forest green" :weight bold)
-            ("PHONE" :foreground "forest green" :weight bold))))
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("MEETING" :foreground "forest green" :weight bold)
+              ("PHONE" :foreground "forest green" :weight bold))))
 ;; I don't wan't the keywords in my exports by default
 (setq-default org-export-with-todo-keywords nil)
 
@@ -34,97 +34,97 @@
 
 (setq org-hide-emphasis-markers t)
 
-  (defun my/set-general-faces-org ()
-    (my/buffer-face-mode-variable)
-    (setq org-pretty-entities t
-          org-startup-indented t
-          org-adapt-indentation t)
-    (variable-pitch-mode +1)
-    (mapc
-     (lambda (face) ;; Other fonts that require it are set to fixed-pitch.
-       (set-face-attribute face nil :inherit 'fixed-pitch))
-     (list 'org-block
-           'org-table
-           'org-verbatim
-           'org-block-begin-line
-           'org-block-end-line
-           'org-meta-line
-           'org-date
-           'org-drawer
-           'org-property-value
-           'org-special-keyword
-           'org-document-info-keyword))
-    (mapc ;; This sets the fonts to a smaller size
-     (lambda (face)
-       (set-face-attribute face nil :height 0.8))
-     (list 'org-document-info-keyword
-           'org-block-begin-line
-           'org-block-end-line
-           'org-meta-line
-           'org-drawer
-           'org-property-value
-           )))
+(defun my/set-general-faces-org ()
+  (my/buffer-face-mode-variable)
+  (setq org-pretty-entities t
+        org-startup-indented t
+        org-adapt-indentation t)
+  (variable-pitch-mode +1)
+  (mapc
+   (lambda (face) ;; Other fonts that require it are set to fixed-pitch.
+     (set-face-attribute face nil :inherit 'fixed-pitch))
+   (list 'org-block
+         'org-table
+         'org-verbatim
+         'org-block-begin-line
+         'org-block-end-line
+         'org-meta-line
+         'org-date
+         'org-drawer
+         'org-property-value
+         'org-special-keyword
+         'org-document-info-keyword))
+  (mapc ;; This sets the fonts to a smaller size
+   (lambda (face)
+     (set-face-attribute face nil :height 0.8))
+   (list 'org-document-info-keyword
+         'org-block-begin-line
+         'org-block-end-line
+         'org-meta-line
+         'org-drawer
+         'org-property-value
+         )))
 
-  (defun my/set-specific-faces-org ()
-    (set-face-attribute 'org-code nil
-                        :inherit '(shadow fixed-pitch))
-    ;; Without indentation the headlines need to be different to be visible
-    (set-face-attribute 'org-level-1 nil
-                        :height 1.25
-                        :foreground "#BEA4DB")
-    (set-face-attribute 'org-level-2 nil
-                        :height 1.15
-                        :foreground "#A382FF"
-                        :slant 'italic)
-    (set-face-attribute 'org-level-3 nil
-                        :height 1.1
-                        :foreground "#5E65CC"
-                        :slant 'italic)
-    (set-face-attribute 'org-level-4 nil
-                        :height 1.05
-                        :foreground "#ABABFF")
-    (set-face-attribute 'org-level-5 nil
-                        :foreground "#2843FB")
-    (set-face-attribute 'org-date nil
-                        :foreground "#ECBE7B"
-                        :height 0.8)
-    (set-face-attribute 'org-document-title nil
-                        :foreground "DarkOrange3"
-                        :height 1.3)
-    (set-face-attribute 'org-ellipsis nil
-                        :foreground "#4f747a" :underline nil)
-    (set-face-attribute 'variable-pitch nil
-                        :family "Roboto Slab" :height 1.2))
+(defun my/set-specific-faces-org ()
+  (set-face-attribute 'org-code nil
+                      :inherit '(shadow fixed-pitch))
+  ;; Without indentation the headlines need to be different to be visible
+  (set-face-attribute 'org-level-1 nil
+                      :height 1.25
+                      :foreground "#BEA4DB")
+  (set-face-attribute 'org-level-2 nil
+                      :height 1.15
+                      :foreground "#A382FF"
+                      :slant 'italic)
+  (set-face-attribute 'org-level-3 nil
+                      :height 1.1
+                      :foreground "#5E65CC"
+                      :slant 'italic)
+  (set-face-attribute 'org-level-4 nil
+                      :height 1.05
+                      :foreground "#ABABFF")
+  (set-face-attribute 'org-level-5 nil
+                      :foreground "#2843FB")
+  (set-face-attribute 'org-date nil
+                      :foreground "#ECBE7B"
+                      :height 0.8)
+  (set-face-attribute 'org-document-title nil
+                      :foreground "DarkOrange3"
+                      :height 1.3)
+  (set-face-attribute 'org-ellipsis nil
+                      :foreground "#4f747a" :underline nil)
+  (set-face-attribute 'variable-pitch nil
+                      :family "Roboto Slab" :height 1.2))
 
-  (defun my/set-keyword-faces-org ()
-    (mapc (lambda (pair) (push pair prettify-symbols-alist))
-          '(;; Syntax
-            ("#+begin_quote" . "“")
-            ("#+end_quote" . "”")))
-    (prettify-symbols-mode +1)
-    (org-superstar-mode +1)
-    )
+(defun my/set-keyword-faces-org ()
+  (mapc (lambda (pair) (push pair prettify-symbols-alist))
+        '(;; Syntax
+          ("#+begin_quote" . "“")
+          ("#+end_quote" . "”")))
+  (prettify-symbols-mode +1)
+  (org-superstar-mode +1)
+  )
 
-  (defun my/style-org ()
-    (my/set-general-faces-org)
-    (my/set-specific-faces-org)
-    (my/set-keyword-faces-org)
-    )
-  (add-hook 'org-mode-hook 'my/style-org)
+(defun my/style-org ()
+  (my/set-general-faces-org)
+  (my/set-specific-faces-org)
+  (my/set-keyword-faces-org)
+  )
+(add-hook 'org-mode-hook 'my/style-org)
 
-  (setq org-agenda-skip-scheduled-if-done t
-        org-agenda-skip-deadline-if-done t
-        org-agenda-include-deadlines t
-        org-agenda-block-separator #x2501
-        org-agenda-compact-blocks t
-        org-agenda-start-with-log-mode t)
-  (with-eval-after-load 'org-journal
-    (define-key org-journal-mode-map (kbd "<C-tab>") 'yas-expand))
-  (setq org-agenda-clockreport-parameter-plist
-        (quote (:link t :maxlevel 5 :fileskip0 t :compact t :narrow 80)))
-  (setq org-agenda-deadline-faces
-        '((1.0001 . org-warning)              ; due yesterday or before
-          (0.0    . org-upcoming-deadline)))  ; due today or later
+(setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-include-deadlines t
+      org-agenda-block-separator #x2501
+      org-agenda-compact-blocks t
+      org-agenda-start-with-log-mode t)
+(with-eval-after-load 'org-journal
+  (define-key org-journal-mode-map (kbd "<C-tab>") 'yas-expand))
+(setq org-agenda-clockreport-parameter-plist
+      (quote (:link t :maxlevel 5 :fileskip0 t :compact t :narrow 80)))
+(setq org-agenda-deadline-faces
+      '((1.0001 . org-warning)              ; due yesterday or before
+        (0.0    . org-upcoming-deadline)))  ; due today or later
 
 (setq-default org-icalendar-include-todo t)
 (setq org-combined-agenda-icalendar-file "~/org/calendar.ics")
@@ -194,8 +194,8 @@
                                  (search . " %i %-12:c")))
 
 (setq org-agenda-format-date (lambda (date) (concat "\n" (make-string (window-width) 9472)
-                                                    "\n"
-                                                    (org-agenda-format-date-aligned date))))
+                                               "\n"
+                                               (org-agenda-format-date-aligned date))))
 (setq org-cycle-separator-lines 2)
 (setq org-agenda-category-icon-alist
       `(("Work" ,(list (all-the-icons-faicon "cogs")) nil nil :ascent center)
@@ -268,20 +268,20 @@
             (define-key org-mode-map (kbd "M-+") 'text-scale-increase)
             (define-key org-mode-map (kbd "M-°") 'text-scale-decrease)
             (define-key org-mode-map (kbd "C-c \" \"")
-              (lambda () (interactive) (org-zotxt-insert-reference-link '(4))))))
+                        (lambda () (interactive) (org-zotxt-insert-reference-link '(4))))))
 
-  (defun org-journal-save-entry-and-exit()
-    "Simple convenience function.
+(defun org-journal-save-entry-and-exit()
+  "Simple convenience function.
       Saves the buffer of the current day's entry and kills the window
       Similar to org-capture like behavior"
-    (interactive)
-    (save-buffer)
-    (kill-buffer-and-window))
+  (interactive)
+  (save-buffer)
+  (kill-buffer-and-window))
 
-  (add-hook 'org-journal-mode-hook
-            (lambda ()
-              (define-key org-journal-mode-map
-                (kbd "C-x C-s") 'org-journal-save-entry-and-exit)))
+(add-hook 'org-journal-mode-hook
+          (lambda ()
+            (define-key org-journal-mode-map
+                        (kbd "C-x C-s") 'org-journal-save-entry-and-exit)))
 
 (setq org-capture-templates
       '(("n" "Notes" entry
@@ -325,101 +325,101 @@
                               "#+TITLE: ${title}\n")
            :immediate-finish t
            :unnarrowed t)))
-           (defun org-roam-node-insert-immediate (arg &rest args)
-  (interactive "P")
-  (let ((args (push arg args))
-        (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                  '(:immediate-finish t)))))
-    (apply #'org-roam-node-insert args)))
+  (defun org-roam-node-insert-immediate (arg &rest args)
+    (interactive "P")
+    (let ((args (push arg args))
+          (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                    '(:immediate-finish t)))))
+      (apply #'org-roam-node-insert args)))
 
-(defun my/org-roam-filter-by-tag (tag-name)
-  (lambda (node)
-    (member tag-name (org-roam-node-tags node))))
+  (defun my/org-roam-filter-by-tag (tag-name)
+    (lambda (node)
+      (member tag-name (org-roam-node-tags node))))
   ;; add inbox)
 
-(defun my/org-roam-list-notes-by-tag (tag-name)
-  (mapcar #'org-roam-node-file
-          (seq-filter
-           (my/org-roam-filter-by-tag tag-name)
-           (org-roam-node-list))))
+  (defun my/org-roam-list-notes-by-tag (tag-name)
+    (mapcar #'org-roam-node-file
+            (seq-filter
+             (my/org-roam-filter-by-tag tag-name)
+             (org-roam-node-list))))
 
-(defun my/org-roam-refresh-agenda-list ()
-  (interactive)
-  (setq org-agenda-files (my/org-roam-list-notes-by-tag "Project")))
+  (defun my/org-roam-refresh-agenda-list ()
+    (interactive)
+    (setq org-agenda-files (my/org-roam-list-notes-by-tag "Project")))
 
-;; Build the agenda list the first time for the session
-(my/org-roam-refresh-agenda-list)
+  ;; Build the agenda list the first time for the session
+  (my/org-roam-refresh-agenda-list)
 
-(defun my/org-roam-project-finalize-hook ()
-  "Adds the captured project file to `org-agenda-files' if the
+  (defun my/org-roam-project-finalize-hook ()
+    "Adds the captured project file to `org-agenda-files' if the
 capture was not aborted."
-  ;; Remove the hook since it was added temporarily
-  (remove-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+    ;; Remove the hook since it was added temporarily
+    (remove-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
 
-  ;; Add project file to the agenda list if the capture was confirmed
-  (unless org-note-abort
-    (with-current-buffer (org-capture-get :buffer)
-      (add-to-list 'org-agenda-files (buffer-file-name)))))
+    ;; Add project file to the agenda list if the capture was confirmed
+    (unless org-note-abort
+      (with-current-buffer (org-capture-get :buffer)
+        (add-to-list 'org-agenda-files (buffer-file-name)))))
 
-(defun my/org-roam-find-project ()
-  (interactive)
-  ;; Add the project file to the agenda after capture is finished
-  (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+  (defun my/org-roam-find-project ()
+    (interactive)
+    ;; Add the project file to the agenda after capture is finished
+    (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
 
-  ;; Select a project file to open, creating it if necessary
-  (org-roam-node-find
-   nil
-   nil
-   (my/org-roam-filter-by-tag "Project")
-   nil
-   :templates
-   '(("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
-      :unnarrowed t))))
+    ;; Select a project file to open, creating it if necessary
+    (org-roam-node-find
+     nil
+     nil
+     (my/org-roam-filter-by-tag "Project")
+     nil
+     :templates
+     '(("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+        :unnarrowed t))))
 
-(defun my/org-roam-capture-inbox ()
-  (interactive)
-  (org-roam-capture- :node (org-roam-node-create)
-                     :templates '(("i" "inbox" plain "* %?"
-                                  :if-new (file+head "Inbox.org" "#+title: Inbox\n")))))
+  (defun my/org-roam-capture-inbox ()
+    (interactive)
+    (org-roam-capture- :node (org-roam-node-create)
+                       :templates '(("i" "inbox" plain "* %?"
+                                     :if-new (file+head "Inbox.org" "#+title: Inbox\n")))))
 
-(defun my/org-roam-capture-task ()
-  (interactive)
-  ;; Add the project file to the agenda after capture is finished
-  (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+  (defun my/org-roam-capture-task ()
+    (interactive)
+    ;; Add the project file to the agenda after capture is finished
+    (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
 
-  ;; Capture the new task, creating the project file if necessary
-  (org-roam-capture- :node (org-roam-node-read
-                            nil
-                            (my/org-roam-filter-by-tag "Project"))
-                     :templates '(("p" "project" plain "** TODO %?"
-                                   :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-                                                          "#+title: ${title}\n#+category: ${title}\n#+filetags: Project"
-                                                          ("Tasks"))))))
+    ;; Capture the new task, creating the project file if necessary
+    (org-roam-capture- :node (org-roam-node-read
+                              nil
+                              (my/org-roam-filter-by-tag "Project"))
+                       :templates '(("p" "project" plain "** TODO %?"
+                                     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                                            "#+title: ${title}\n#+category: ${title}\n#+filetags: Project"
+                                                            ("Tasks"))))))
 
-(defun my/org-roam-copy-todo-to-today ()
-  (interactive)
-  (let ((org-refile-keep t) ;; Set this to nil to delete the original!
-        (org-roam-dailies-capture-templates
-          '(("t" "tasks" entry "%?"
-             :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
-        (org-after-refile-insert-hook #'save-buffer)
-        today-file
-        pos)
-    (save-window-excursion
-      (org-roam-dailies--capture (current-time) t)
-      (setq today-file (buffer-file-name))
-      (setq pos (point)))
+  (defun my/org-roam-copy-todo-to-today ()
+    (interactive)
+    (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+          (org-roam-dailies-capture-templates
+           '(("t" "tasks" entry "%?"
+              :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+          (org-after-refile-insert-hook #'save-buffer)
+          today-file
+          pos)
+      (save-window-excursion
+        (org-roam-dailies--capture (current-time) t)
+        (setq today-file (buffer-file-name))
+        (setq pos (point)))
 
-    ;; Only refile if the target file is different than the current file
-    (unless (equal (file-truename today-file)
-                   (file-truename (buffer-file-name)))
-      (org-refile nil nil (list "Tasks" today-file nil pos)))))
+      ;; Only refile if the target file is different than the current file
+      (unless (equal (file-truename today-file)
+                     (file-truename (buffer-file-name)))
+        (org-refile nil nil (list "Tasks" today-file nil pos)))))
 
-(add-to-list 'org-after-todo-state-change-hook
-             (lambda ()
-               (when (equal org-state "DONE")
-                 (my/org-roam-copy-todo-to-today))))
+  (add-to-list 'org-after-todo-state-change-hook
+               (lambda ()
+                 (when (equal org-state "DONE")
+                   (my/org-roam-copy-todo-to-today))))
   (org-roam-db-autosync-mode)
   )
 (setq org-id-extra-files (org-roam--list-files org-roam-directory))
@@ -433,8 +433,8 @@ capture was not aborted."
         (org-caldav-files '("~/org/calendar.org")))
     (call-interactively 'org-caldav-sync)))
 
-  (setq org-journal-dir "~/org/dailies/")
-  (setq org-journal-enable-encryption nil)
+(setq org-journal-dir "~/org/dailies/")
+(setq org-journal-enable-encryption nil)
 
 ;; path where mu4e is installed
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa-src/mu4e-1.8.14")
@@ -469,9 +469,9 @@ capture was not aborted."
            (:maildir "/[Gmail]/All Mail"   :key ?a))))
 
 (with-eval-after-load "ispell"
-;; (after! flyspell-lazy
-;;   (flyspell-lazy-mode -1))
-(setq ispell-program-name "hunspell")
+  ;; (after! flyspell-lazy
+  ;;   (flyspell-lazy-mode -1))
+  (setq ispell-program-name "hunspell")
   (setq ispell-dictionary "en_US,fr_FR")
   ;; ispell-set-spellchecker-params has to be called
   ;; before ispell-hunspell-add-multi-dic will work

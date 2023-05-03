@@ -8,21 +8,14 @@
 ;; clients, file templates and snippets.
 (setq user-full-name "Frédéric Willem"
       user-mail-address "frederic.willem@gmail.com")
-(use-package! dashboard
-  :ensure t
-  :init (dashboard-setup-startup-hook)
-  :config
-  (require 'dashboard)
-  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
-  (setq dashboard-startup-banner 'logo)
-  (setq dashboard-project-backend 'projectile)
-  (setq dashboard-items '((recents . 5)
-                          (bookmarks . 5)
-                          (projects . 5)
-                          (agenda . 5)
-                          (registers . 5)
-                          )))
 ;; set more convient *leader keys
+(custom-set-faces!
+  '(doom-dashboard-banner :foreground "red" :weight bold)
+  '(doom-dashboard-footer :inherit font-lock-constant-face)
+  '(doom-dashboard-footer-icon :inherit all-the-icons-red)
+  '(doom-dashboard-loaded :inherit font-lock-warning-face)
+  '(doom-dashboard-menu-desc :inherit font-lock-string-face)
+  '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
 (setq doom-localleader-key ";")
 (setq doom-localleader-alt-key "M-;")
 (setq org-ellipsis " ")
@@ -62,14 +55,15 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-;; (setq doom-font (font-spec :family "Meslo LG S for Powerline" :size 14))
-;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-
+(setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "JetBrains Mono")
+      ;; doom-unicode-font (font-spec :family "JetBrains Mono")
+      doom-big-font (font-spec :family "JetBrains Mono" :size 19))
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; (load-theme 'leuven t)
-(setq doom-theme 'doom-homage-black)
+(setq doom-theme 'doom-monokai-machine)
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
@@ -183,12 +177,12 @@
   (define-key evil-motion-state-map (kbd "RET") nil))
 
 (global-set-key (kbd (cond
-                ((eq system-type 'darwin) "s-r")
-                ((eq system-type 'gnu/linux) "M-²"))) 'next-multiframe-window)
+                      ((eq system-type 'darwin) "s-r")
+                      ((eq system-type 'gnu/linux) "M-²"))) 'next-multiframe-window)
 
 (setq reftex-external-file-finders
-        '(("tex" . "kpsewhich -format=.tex %f")
-          ("bib" . "kpsewhich -format=.bib %f")))
+      '(("tex" . "kpsewhich -format=.tex %f")
+        ("bib" . "kpsewhich -format=.bib %f")))
 (setq bibtex-completion-pdf-field "file")
 (map! :leader :desc "Capture" "X" #'org-roam-dailies-capture-today)
 
@@ -218,10 +212,10 @@
 (setq epg-pinentry-mode 'loopback)
 
 (setq nnrss-ignore-article-fields '(description slash:comments
-                                                slash:hit_parade))
+                                    slash:hit_parade))
 
 (add-hook! latex-mode
-   (setq flycheck-local-checkers '((lsp . ((next-checkers . (textlint)))))))
+  (setq flycheck-local-checkers '((lsp . ((next-checkers . (textlint)))))))
 (add-hook! latex-mode (outline-minor-mode))
 (add-hook! latex-mode (define-key latex-mode-map (kbd "<backtab>") 'outline-cycle))
 
