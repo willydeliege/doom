@@ -1,4 +1,4 @@
-;;; org-config.el -*- lexical-binding: t; -*-
+;;; -*- mode: Lisp; lexical-binding: t; -*-
 
 (setq browse-url-browser-function 'browse-url-generic)
 (setq browse-url-generic-program  "google-chrome-stable")
@@ -8,7 +8,7 @@
 
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELED(c@/!)"))))
 
 (setq-default org-enforce-todo-dependencies t)
 
@@ -18,52 +18,15 @@
               ("DONE" :foreground "forest green" :weight bold)
               ("WAITING" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("CANCELED" :foreground "forest green" :weight bold)
               ("MEETING" :foreground "forest green" :weight bold)
               ("PHONE" :foreground "forest green" :weight bold))))
 ;; I don't wan't the keywords in my exports by default
 (setq-default org-export-with-todo-keywords nil)
 
-(defun my/buffer-face-mode-variable ()
-  "Set font to a variable width (proportional) fonts in current buffer"
-  (interactive)
-  (setq buffer-face-mode-face '(:family "Roboto Slab"
-                                :height 150
-                                :width normal))
-  (buffer-face-mode))
 
 (setq org-hide-emphasis-markers t)
 
-(defun my/set-general-faces-org ()
-  (my/buffer-face-mode-variable)
-  (setq org-pretty-entities t
-        org-startup-indented t
-        org-adapt-indentation t)
-  (variable-pitch-mode +1)
-  (mapc
-   (lambda (face) ;; Other fonts that require it are set to fixed-pitch.
-     (set-face-attribute face nil :inherit 'fixed-pitch))
-   (list 'org-block
-         'org-table
-         'org-verbatim
-         'org-block-begin-line
-         'org-block-end-line
-         'org-meta-line
-         'org-date
-         'org-drawer
-         'org-property-value
-         'org-special-keyword
-         'org-document-info-keyword))
-  (mapc ;; This sets the fonts to a smaller size
-   (lambda (face)
-     (set-face-attribute face nil :height 0.8))
-   (list 'org-document-info-keyword
-         'org-block-begin-line
-         'org-block-end-line
-         'org-meta-line
-         'org-drawer
-         'org-property-value
-         )))
 
 (defun my/set-specific-faces-org ()
   (set-face-attribute 'org-code nil
@@ -105,12 +68,6 @@
   (org-superstar-mode +1)
   )
 
-(defun my/style-org ()
-  (my/set-general-faces-org)
-  (my/set-specific-faces-org)
-  (my/set-keyword-faces-org)
-  )
-(add-hook 'org-mode-hook 'my/style-org)
 
 (setq org-agenda-skip-scheduled-if-done t
       org-agenda-skip-deadline-if-done t
@@ -176,7 +133,6 @@
       calendar-mark-diary-entries-flag nil)
 
 (defun my/style-org-agenda()
-  (my/buffer-face-mode-variable)
   (set-face-attribute 'org-agenda-date nil :height 1.1)
   (set-face-attribute 'org-agenda-date-today nil :height 1.1 :slant 'italic)
   (set-face-attribute 'org-agenda-date-weekend nil :height 1.1))
@@ -233,8 +189,6 @@
                            ;; their order is unspecified, defaulting to 0. Sections
                            ;; are displayed lowest-number-first.
                            :order 1)
-                          (:name "Papers"
-                           :file-path "org/roam/notes")
                           (:name "Waiting"
                            :todo "WAITING"
                            :order 9)
