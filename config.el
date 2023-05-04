@@ -107,122 +107,26 @@
   :config
   (global-evil-surround-mode 1))
 
-(use-package! ox-hugo
-  :after ox)
-(use-package! org-ref
-  :config
-  (setq org-ref-csl-default-style (expand-file-name "~/custom-org-citeproc-export.csl"))
-  (setq org-cite-csl-locales-dir (expand-file-name "~/csl-locales/"))
-  :after org)
 
-(use-package! org-caldav
-  :after org)
-(use-package! org-super-agenda
-  :hook (org-agenda-mode . org-super-agenda-mode))
-(use-package! org-modern
-  :after org)
-(use-package! org-pomodoro
-  :after org)
-
-(use-package! flycheck
-  :commands global-flycheck-mode
-  :preface
-  (defvar-local flycheck-local-checkers nil)
-  (defun +flycheck-checker-get(fn checker property)
-    (or (alist-get property (alist-get checker flycheck-local-checkers))
-        (funcall fn checker property)))
-  (advice-add 'flycheck-checker-get :around '+flycheck-checker-get)
-  :init
-  (global-flycheck-mode)
-  :bind (:map flycheck-mode-map
-              ("C-c e" . flycheck-list-errors)))
-
-
-(add-hook 'org-cycle-hook 'org-cycle-hide-drawers)
-
-(setq lsp-enable-file-watchers nil)
-(setq lsp-headerline-breadcrumb-enable t)
+;; (setq lsp-headerline-breadcrumb-enable t)
 ;;
-(setq ns-alternate-modifier 'meta)
-(setq ns-right-alternate-modifier 'none)
 
 ;; Stop polluting the directory with auto-saved files and backup
-(setq auto-save-default nil)
-(setq make-backup-files nil)
 (setq auto-save-list-file-prefix nil)
 ;; Prompt for local variables
 (setq-default enable-local-variables t)
 ;; Well, it's more so that you know this option
-(setq kill-whole-line t)
-(setq kill-read-only-ok t)
-(setq require-final-newline t)
 
 ;; Scrolling done right
 (setq scroll-error-top-bottom t)
-
-;; Number of lines of continuity when scrolling by screenfulls
-(setq next-screen-context-lines 0)
-
-(setq helm-buffer-list-reorder-fn #'helm-buffers-reorder-buffer-list)
-
-(setq flycheck-textlint-config "/Users/hugo/.textlintrc")
-(setq flycheck-textlint-executable "/Users/hugo/node_modules/.bin/textlint")
-(setq flycheck-textlint-plugin-alist '((markdown-mode . "@textlint/markdown")
-                                       (gfm-mode . "@textlint/markdown")
-                                       (latex-mode . "latex2e")
-                                       (t . "@textlint/text")))
-(add-hook! 'latex-mode-hook (flycheck-add-next-checker 'lsp 'textlint))
-(display-time-mode 1)
-
-(setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
-
-(after! evil-maps
-  (define-key evil-insert-state-map (kbd "<C-tab>") 'yas-expand)
-  (define-key evil-motion-state-map (kbd "SPC") nil)
-  (define-key evil-motion-state-map (kbd "RET") nil))
-
-(global-set-key (kbd (cond
-                      ((eq system-type 'darwin) "s-r")
-                      ((eq system-type 'gnu/linux) "M-²"))) 'next-multiframe-window)
-
-(setq reftex-external-file-finders
-      '(("tex" . "kpsewhich -format=.tex %f")
-        ("bib" . "kpsewhich -format=.bib %f")))
-(setq bibtex-completion-pdf-field "file")
 (map! :leader :desc "Capture" "X" #'org-roam-dailies-capture-today)
 
 ;; Discover projects in the repo dir
 (after! projectile
   (setq projectile-project-search-path '(("~/repos" . 2))
         projectile-sort-order 'recentf ))
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
-(defun my/cleanup-text-mode ()
-  (setq fill-column 80)
-  (display-line-numbers-mode -1)
-  (display-fill-column-indicator-mode -1)
-  (setq isearch-regexp-lax-whitespace t)
-  (setq search-whitespace-regexp "[ \t\r\n]+"))
-(add-hook 'text-mode-hook #'my/cleanup-text-mode)
-(add-hook 'org-mode-hook #'my/cleanup-text-mode)
-(add-hook 'markdown-mode-hook #'my/cleanup-text-mode)
 
-(add-hook 'c-mode-hook 'flycheck-mode)
 
-(setq exec-path-from-shell-variables
-      '("PATH" "MANPATH" "SSH_AGENT_PID"  "SSH_AUTH_SOCK"))
-(setq exec-path-from-shell-arguments nil)
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
-
-(setq epg-pinentry-mode 'loopback)
-
-(setq nnrss-ignore-article-fields '(description slash:comments
-                                    slash:hit_parade))
-
-(add-hook! latex-mode
-  (setq flycheck-local-checkers '((lsp . ((next-checkers . (textlint)))))))
-(add-hook! latex-mode (outline-minor-mode))
-(add-hook! latex-mode (define-key latex-mode-map (kbd "<backtab>") 'outline-cycle))
 
 (after! tramp (setenv "SHELL" "/usr/local/bin/fish"))
 (after! org (load! "org-config.el"))
