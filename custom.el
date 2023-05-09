@@ -6,7 +6,7 @@
  ;; If there is more than one, they won't work right.
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(org-agenda-files
-   '("/home/willefi/org/Inbox.org" "/home/willefi/org/20230424213108-java_tutorial.org" "/home/willefi/org/commande_medispost.org" "/home/willefi/org/20230421192549-calendar_configuration_in_emacs.org" "/home/willefi/org/20230422122941-create_org_roam_config.org" "/home/willefi/org/20230421135853-gestion_des_medicaments.org" "/home/willefi/org/20230405084223-commande_medipost.org"))
+   '("/home/willefi/org/20230506124919-tt.org" "/home/willefi/org/20230424213108-java_tutorial.org" "/home/willefi/org/20230503210030-test_project.org" "/home/willefi/org/20230426223343-entretien_spw.org" "/home/willefi/org/commande_medispost.org" "/home/willefi/org/org_roam_amd_gtd.org" "/home/willefi/org/20230421192549-calendar_configuration_in_emacs.org" "/home/willefi/org/20230422122941-create_org_roam_config.org" "/home/willefi/org/20230421135853-gestion_des_medicaments.org" "/home/willefi/org/Inbox.org"))
  '(package-selected-packages '(bbdb @ spacemacs-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
