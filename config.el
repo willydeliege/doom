@@ -16,7 +16,22 @@
   '(doom-dashboard-loaded :inherit font-lock-warning-face)
   '(doom-dashboard-menu-desc :inherit font-lock-string-face)
   '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
+(defhydra doom-window-resize-hydra (:hint nil)
+  "
+             _k_ increase height
+_h_ decrease width    _l_ increase width
+             _j_ decrease height
+"
+  ("h" evil-window-decrease-width)
+  ("j" evil-window-increase-height)
+  ("k" evil-window-decrease-height)
+  ("l" evil-window-increase-width)
 
+  ("q" nil))
+
+(map!
+ (:leader
+  :desc "Hydra resize" :n "w SPC" #'doom-window-resize-hydra/body))
 (custom-set-faces!
   '(aw-leading-char-face
     :foreground "white" :background "red"
@@ -96,13 +111,6 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
-(use-package! evil-escape
-  :config
-  (setq-default evil-escape-key-sequence "jk")
-  (setq-default evil-escape-delay 0.15)
-  (setq-default evil-escape-unordered-key-sequence nil)
-  (setq-default evil-escape-inhibit-functions nil)
-  (evil-escape-mode))
 (use-package! evil-surround
   :config
   (global-evil-surround-mode 1))
@@ -111,8 +119,6 @@
 ;; (setq lsp-headerline-breadcrumb-enable t)
 ;;
 
-;; Stop polluting the directory with auto-saved files and backup
-(setq auto-save-list-file-prefix nil)
 ;; Prompt for local variables
 (setq-default enable-local-variables t)
 ;; Well, it's more so that you know this option
@@ -130,3 +136,4 @@
 
 (after! tramp (setenv "SHELL" "/usr/local/bin/fish"))
 (after! org (load! "org-config.el"))
+(load! "mu4e.el")
