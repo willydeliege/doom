@@ -47,7 +47,7 @@
 ;; ...or multiple packages
 ;(unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
-; (unpin! t)
+(unpin! t)
 (package! ef-themes  :recipe (:host github :repo "protesilaos/ef-themes"))
 
 (package! org-super-agenda)
