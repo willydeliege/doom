@@ -419,7 +419,7 @@ capture was not aborted."
 (setq org-journal-dir "~/org/dailies/")
 (setq org-journal-enable-encryption nil)
 ;; path where mu4e is installed
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa-src/mu4e-1.8.14")
+(add-to-list 'load-path "/usr/local/share/emacs/site-lips/mu4e")
 ;; sending mails with msmtp
 (after! mu4e
   (setq sendmail-program (executable-find "msmtp")
