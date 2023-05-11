@@ -32,6 +32,11 @@ _h_ decrease width    _l_ increase width
 (map!
  (:leader
   :desc "Hydra resize" :n "w SPC" #'doom-window-resize-hydra/body))
+;disable backup
+(setq backup-inhibited t)
+;disable auto save
+(setq auto-save-default nil)
+
 (custom-set-faces!
   '(aw-leading-char-face
     :foreground "white" :background "red"
@@ -64,7 +69,7 @@ _h_ decrease width    _l_ increase width
     (evil-paste-after 1)
     (move-to-column column)))
 (map! :desc "Paste below" :n "]p" #'my/paste-below)
-
+;; (which-key-setup-minibuffer)
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
 
