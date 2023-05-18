@@ -55,7 +55,6 @@
 (package! org-pdftools)
 ;; (package! org-plus-contrib)
 (package! svg-tag-mode)
-(package! mu4e-dashboard :recipe (:host github :repo "rougier/mu4e-dashboard"))
 (unpin! org-roam)
 (package! org-special-block-extras)
 (package! sublime-themes)
