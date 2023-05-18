@@ -6,25 +6,43 @@
 (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
       doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
-(setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELED(c@/!)"))))
 
 (setq-default org-enforce-todo-dependencies t)
 
-(setq org-todo-keyword-faces
-      (quote (("TODO" :foreground "red" :weight bold)
-              ("NEXT" :foreground "blue" :weight bold)
-              ("DONE" :foreground "forest green" :weight bold)
-              ("WAITING" :foreground "orange" :weight bold)
-              ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELED" :foreground "forest green" :weight bold)
-              ("MEETING" :foreground "forest green" :weight bold)
-              ("PHONE" :foreground "forest green" :weight bold))))
+  (setq org-todo-keywords
+        '((sequence
+           "TODO(t)"  ; A task that needs doing & is ready to do
+           "NEXT(t)"  ; The nex task in to perform in the project
+           "PROJ(p)"  ; A project, which usually contains other tasks
+           "WAIT(w@)"  ; Something external is holding up this task
+           "HOLD(h)"  ; This task is paused/on hold because of me
+           "IDEA(i)"  ; An unconfirmed and unapproved task or notion
+           "|"
+           "DONE(d)"  ; Task successfully completed
+           "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
+          (sequence
+           "[ ](T)"   ; A task that needs doing
+           "[-](S)"   ; Task is in progress
+           "[?](W)"   ; Task is being held up or paused
+           "|"
+           "[X](D)")  ; Task was completed
+          (sequence
+           "|"
+           "OKAY(o)"
+           "YES(y)"
+           "NO(n)"))
+        org-todo-keyword-faces
+        '(("[-]"  . +org-todo-active)
+          ("[?]"  . +org-todo-onhold)
+          ("WAIT" . +org-todo-onhold)
+          ("HOLD" . +org-todo-onhold)
+          ("PROJ" . +org-todo-project)
+          ("NO"   . +org-todo-cancel)
+          ("KILL" . +org-todo-cancel)))
 ;; I don't wan't the keywords in my exports by default
 (setq-default org-export-with-todo-keywords nil)
 
-
+;; hide all the  * / _ chars
 (setq org-hide-emphasis-markers t)
 
 
@@ -166,7 +184,6 @@
                        '((:name "Today"
                           :time-grid t
                           :date today
-                          :todo "TODAY"
                           :scheduled today
                           :order 1)))))
           (alltodo "" ((org-agenda-overriding-header "")
@@ -190,7 +207,7 @@
                            ;; are displayed lowest-number-first.
                            :order 1)
                           (:name "Waiting"
-                           :todo "WAITING"
+                           :todo "WAIT"
                            :order 9)
                           (:name "On hold"
                            :todo "HOLD"
@@ -418,66 +435,6 @@ capture was not aborted."
 
 (setq org-journal-dir "~/org/dailies/")
 (setq org-journal-enable-encryption nil)
-;; path where mu4e is installed
-(add-to-list 'load-path "/usr/local/share/emacs/site-lips/mu4e")
-;; sending mails with msmtp
-(after! mu4e
-  (setq sendmail-program (executable-find "msmtp")
-        send-mail-function #'smtpmail-send-it
-        message-sendmail-f-is-evil t
-        message-sendmail-extra-arguments '("--read-envelope-from")
-        message-send-mail-function #'message-send-mail-with-sendmail)
-  ;; set a more visible mu4e view (with dark-mode enabled)
-  (setq shr-color-visible-luminance-min 01)
-  ;; use imagemagick, if available
-  (when (fboundp 'imagemagick-register-types)
-    (imagemagick-register-types))
-  (setq mu4e-headers-unread-mark    '("u" . "📩 "))
-  (setq mu4e-headers-draft-mark     '("D" . "🚧 "))
-  (setq mu4e-headers-flagged-mark   '("F" . "🚩 "))
-  (setq mu4e-headers-new-mark       '("N" . "✨ "))
-  (setq mu4e-headers-passed-mark    '("P" . "↪ "))
-  (setq mu4e-headers-replied-mark   '("R" . "↩ "))
-  (setq mu4e-headers-seen-mark      '("S" . " "))
-  (setq mu4e-headers-trashed-mark   '("T" . "🗑️"))
-  (setq mu4e-headers-attach-mark    '("a" . "📎 "))
-  (setq mu4e-headers-encrypted-mark '("x" . "🔑 "))
-  (setq mu4e-headers-signed-mark    '("s" . "🖊 ")) (setq mu4e-update-interval 60)
-  (setq mu4e-maildir-shortcuts
-        '( (:maildir "/INBOX" :key ?i)
-           (:maildir "/[Gmail]/Sent Mail"  :key ?S)
-           (:maildir "/[Gmail]/Trash" :key ?t)
-           (:maildir "/[Gmail]/Starred" :key ?s)
-           (:maildir "/[Gmail]/All Mail"   :key ?a)))
-
-  (setq org-capture-templates
-        `(("m" "Email Workflow")
-          ("mf" "Follow Up" entry (file+olp "~/org/Inbox.org" "Follow Up")
-                "* TODO Follow up with %:fromname on %a\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n\n%i" :immediate-finish t)
-          ("mr" "Read Later" entry (file+olp "~/org/Inbox.org" "Read Later")
-                "* TODO Read %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n\n%a\n\n%i" :immediate-finish t)))
-
-  (defun efs/capture-mail-follow-up (msg)
-    (interactive)
-    (call-interactively 'org-store-link)
-    (org-capture nil "mf"))
-
-  (defun efs/capture-mail-read-later (msg)
-    (interactive)
-    (call-interactively 'org-store-link)
-    (org-capture nil "mr"))
-
-  ;; Add custom actions for our capture templates
-  (add-to-list 'mu4e-headers-actions
-               '("follow up" . efs/capture-mail-follow-up) t)
-  (add-to-list 'mu4e-view-actions
-               '("follow up" . efs/capture-mail-follow-up) t)
-  (add-to-list 'mu4e-headers-actions
-               '("read later" . efs/capture-mail-read-later) t)
-  (add-to-list 'mu4e-view-actions
-               '("read later" . efs/capture-mail-read-later) t)
-
-  )
 
 (with-eval-after-load "ispell"
   ;; (after! flyspell-lazy
@@ -492,6 +449,9 @@ capture was not aborted."
 (add-hook 'before-save-hook 'time-stamp)
 
 (add-hook 'markdown-mode-hook 'my/buffer-face-mode-variable)
-
+(after! mu4e
+  (setq org-contacts-files '("~/org/contacts.org"))
+  (require 'org-contacts))
 (setq org-return-follows-link t)
 (setq org-mobile-directory "~/webdav")
+(setq org-journal-dir "/home/willefi/org/daily/")
