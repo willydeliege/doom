@@ -1,14 +1,157 @@
+#+title: Config
+#+PROPERTY: header-args :tangle config.el
+* Header
+Place your private configuration here! Remember, you do not need to run 'doom sync' after modifying this file!
+#+begin_src elisp
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+;; Some functionality uses this to identify you, e.g. GPG configuration, email
+;; clients, file templates and snippets.
 
-(setq-default org-enforce-todo-dependencies t)
+#+end_src
+* Personal informations
+#+begin_src elisp
+(setq user-full-name "Frédéric Willem"
+      user-mail-address "frederic.willem@gmail.com")
+#+end_src
+* Browser
+Set google-chrome as default browser for emacs
+#+begin_src elisp
+(setq browse-url-browser-function 'browse-url-generic)
+(setq browse-url-generic-program  "google-chrome-stable")
+(setq browse-url-generic-args '("--incognito"))
 
+#+end_src
+* Windows/UI
+#+begin_src elisp
+;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
+;; are the three important ones:
+
+;; + `doom-font'
+;; + `doom-variable-pitch-font'
+;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
+;;   presentations or streaming.
+;;
+;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
+;; font string. You generally only need these two:
+(setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "JetBrains Mono")
+      doom-big-font (font-spec :family "JetBrains Mono" :size 20))
+(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+      doom-themes-enable-italic t) ; if nil, italics is universally disabled
+;; There are two ways to load a theme. Both assume the theme is installed and
+;; available. You can either set `doom-theme' or manually load a theme with the
+;; `load-theme' function. This is the default:
+;; (load-theme 'leuven t)
+(setq display-line-numbers-type 'relative)
+
+(setq doom-theme 'doom-feather-dark)
+(custom-set-faces   '(default ((t (:background "#000000")))))
+
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+(defhydra doom-window-resize-hydra (:hint nil)
+  "
+             _k_ increase height
+_h_ decrease width    _l_ increase width
+             _j_ decrease height
+"
+  ("h" evil-window-decrease-width)
+  ("j" evil-window-increase-height)
+  ("k" evil-window-decrease-height)
+  ("l" evil-window-increase-width)
+
+  ("q" nil))
+(map!
+ (:leader
+  :desc "Hydra resize" :n "w SPC" #'doom-window-resize-hydra/body))
+
+;; mqke wihc-key non-truncated
+(setq which-key-allow-imprecise-window-fit nil)
+#+end_src
+* Global keybindings
+#+begin_src elisp
+
+(setq doom-localleader-key ";")
+(setq doom-localleader-alt-key "M-;")
+;; esc in insert mode save the file
+(add-hook 'evil-insert-state-exit-hook
+          (lambda ()
+            (call-interactively #'save-buffer)))
+;; Beter pasting from system clipboarr
+(defun my/paste-above ()
+  "Paste above current line with preserving indentation."
+  (interactive)
+  (let ((indent (current-indentation))
+        (column (current-column)))
+    (evil-insert-newline-above)
+    (indent-to indent)
+    (evil-paste-after 1)
+    (move-to-column column)))
+(map! :desc "Paste below" :n "]p" #'my/paste-below)
+(defun my/paste-below ()
+  "Paste above current line with preserving indentation."
+  (interactive)
+  (let ((indent (current-indentation))
+        (column (current-column)))
+    (evil-insert-newline-below)
+    (indent-to indent)
+    (evil-paste-after 1)
+    (move-to-column column)))
+(map! :desc "Paste below" :n "[p" #'my/paste-above)
+(map! :leader :desc "Capture" "X" #'org-roam-dailies-capture-today)
+#+end_src
+* Auto-save
+This ensure directories are clean without # files and so on
+#+begin_src elisp
+
+(setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+
+;; auto-save-mode doesn't create the path automatically!
+(make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
+
+(setq auto-save-list-file-prefix (expand-file-name "tmp/auto-saves/sessions/" user-emacs-directory)
+      auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves/" user-emacs-directory) t)))
+
+(setq create-lockfiles nil)
+#+end_src
+* Misc
+#+begin_src elisp
+(setq org-ellipsis " ")
+
+;; If you use `org' and don't want your org files in the default location below,
+;; change `org-directory'. It must be set before org loads!
+(setq org-directory "~/org/")
+(setq org-roam-directory "~/org/")
+
+;; Prompt for local variables
+(setq-default enable-local-variables t)
+;; Well, it's more so that you know this option
+
+;; Scrolling done right
+(setq scroll-error-top-bottom t)
+
+;; Discover projects in the repo dir
+(after! projectile
+  (setq projectile-project-search-path '(("~/repos" . 2))
+        projectile-sort-order 'recentf ))
+
+#+end_src
+* Org-mode
+:PROPERTIES:
+:ID:       6d275f13-74d9-4309-911a-1bf2f6e9c10a
+:END:
+#+begin_src elisp
+
+(setq-default org-enforce-todo-dependencies nil)
+(after! org
+  (setq org-stuck-projects '("+Project/PROJ" ("NEXT" "WAIT") nil ""))
   (setq org-todo-keywords
         '((sequence
            "TODO(t)"  ; A task that needs doing & is ready to do
-           "NEXT(t)"  ; The nex task in to perform in the project
+           "NEXT(n)"  ; The nex task in to perform in the project
            "PROJ(p)"  ; A project, which usually contains other tasks
-           "WAIT(w@)"  ; Something external is holding up this task
-           "HOLD(h)"  ; This task is paused/on hold because of me
+           "WAIT(W@)"  ; Something external is holding up this task
+           "HOLD(H@)"  ; This task is paused/on hold because of me
            "IDEA(i)"  ; An unconfirmed and unapproved task or notion
            "|"
            "DONE(d)"  ; Task successfully completed
@@ -16,71 +159,24 @@
           (sequence
            "[ ](T)"   ; A task that needs doing
            "[-](S)"   ; Task is in progress
-           "[?](W)"   ; Task is being held up or paused
            "|"
            "[X](D)")  ; Task was completed
           (sequence
-           "|"
-           "OKAY(o)"
-           "YES(y)"
-           "NO(n)"))
+           "READ(r)"
+           "WATCH(w)"))
         org-todo-keyword-faces
         '(("[-]"  . +org-todo-active)
-          ("[?]"  . +org-todo-onhold)
           ("NEXT"  . +org-todo-active)
           ("WAIT" . +org-todo-onhold)
           ("HOLD" . +org-todo-onhold)
           ("PROJ" . +org-todo-project)
           ("NO"   . +org-todo-cancel)
-          ("KILL" . +org-todo-cancel)))
-(setq org-log-done 'time)
+          ("KILL" . +org-todo-cancel))))
 ;; I don't wan't the keywords in my exports by default
 (setq-default org-export-with-todo-keywords nil)
 
 ;; hide all the  * / _ chars
 (setq org-hide-emphasis-markers t)
-
-
-(defun my/set-specific-faces-org ()
-  (set-face-attribute 'org-code nil
-                      :inherit '(shadow fixed-pitch))
-  ;; Without indentation the headlines need to be different to be visible
-  (set-face-attribute 'org-level-1 nil
-                      :height 1.25
-                      :foreground "#BEA4DB")
-  (set-face-attribute 'org-level-2 nil
-                      :height 1.15
-                      :foreground "#A382FF"
-                      :slant 'italic)
-  (set-face-attribute 'org-level-3 nil
-                      :height 1.1
-                      :foreground "#5E65CC"
-                      :slant 'italic)
-  (set-face-attribute 'org-level-4 nil
-                      :height 1.05
-                      :foreground "#ABABFF")
-  (set-face-attribute 'org-level-5 nil
-                      :foreground "#2843FB")
-  (set-face-attribute 'org-date nil
-                      :foreground "#ECBE7B"
-                      :height 0.8)
-  (set-face-attribute 'org-document-title nil
-                      :foreground "DarkOrange3"
-                      :height 1.3)
-  (set-face-attribute 'org-ellipsis nil
-                      :foreground "#4f747a" :underline nil)
-  (set-face-attribute 'variable-pitch nil
-                      :family "Roboto Slab" :height 1.2))
-
-(defun my/set-keyword-faces-org ()
-  (mapc (lambda (pair) (push pair prettify-symbols-alist))
-        '(;; Syntax
-          ("#+begin_quote" . "“")
-          ("#+end_quote" . "”")))
-  (prettify-symbols-mode +1)
-  (org-superstar-mode +1)
-  )
-
 
 (setq org-agenda-skip-scheduled-if-done t
       org-agenda-skip-deadline-if-done t
@@ -88,8 +184,6 @@
       org-agenda-block-separator #x2501
       org-agenda-compact-blocks t
       org-agenda-start-with-log-mode t)
-(with-eval-after-load 'org-journal
-  (define-key org-journal-mode-map (kbd "<C-tab>") 'yas-expand))
 (setq org-agenda-clockreport-parameter-plist
       (quote (:link t :maxlevel 5 :fileskip0 t :compact t :narrow 80)))
 (setq org-agenda-deadline-faces
@@ -145,35 +239,16 @@
       calendar-week-start-day 1
       calendar-mark-diary-entries-flag nil)
 
-(defun my/style-org-agenda()
-  (set-face-attribute 'org-agenda-date nil :height 1.1)
-  (set-face-attribute 'org-agenda-date-today nil :height 1.1 :slant 'italic)
-  (set-face-attribute 'org-agenda-date-weekend nil :height 1.1))
-
-(add-hook 'org-agenda-mode-hook 'my/style-org-agenda)
-
 (setq org-agenda-breadcrumbs-separator " ❱ "
-      org-agenda-current-time-string "⏰ ┈┈┈┈┈┈┈┈┈┈┈ now"
-      org-agenda-time-grid '((weekly today require-timed)
-                             (800 1000 1200 1400 1600 1800 2000)
-                             "---" "┈┈┈┈┈┈┈┈┈┈┈┈┈")
-      org-agenda-prefix-format '((agenda . "%i %-12:c%?-12t%b% s")
-                                 (todo . " %i %-12:c")
-                                 (tags . " %i %-12:c")
-                                 (search . " %i %-12:c")))
+      org-agenda-current-time-string "⏰ ┈┈┈┈┈┈┈┈┈┈┈ now")
 
 (setq org-agenda-format-date (lambda (date) (concat "\n" (make-string (window-width) 9472)
                                                "\n"
                                                (org-agenda-format-date-aligned date))))
 (setq org-cycle-separator-lines 2)
-(setq org-agenda-category-icon-alist
-      `(("Work" ,(list (all-the-icons-faicon "cogs")) nil nil :ascent center)
-        ("Personal" ,(list (all-the-icons-material "person")) nil nil :ascent center)
-        ("Calendar" ,(list (all-the-icons-faicon "calendar")) nil nil :ascent center)
-        ("Reading" ,(list (all-the-icons-faicon "book")) nil nil :ascent center)))
 
 (setq org-agenda-custom-commands
-      '(("z" "Hugo view"
+      '(("z" "My view"
          ((agenda "" ((org-agenda-span 'day)
                       (org-super-agenda-groups
                        '((:name "Today"
@@ -188,12 +263,8 @@
                            :deadline today
                            :face (:background "black"))
                           (:name "Passed deadline"
-                           :and (:deadline past :todo ("TODO" "WAITING" "HOLD" "NEXT"))
+                           :and (:deadline past :todo ("TODO" "WAIT" "HOLD" "NEXT"))
                            :face (:background "#7f1b19"))
-                          (:name "Work important"
-                           :and (:priority>= "B" :category "Work" :todo ("TODO" "NEXT")))
-                          (:name "Work other"
-                           :and (:category "Work" :todo ("TODO" "NEXT")))
                           (:name "Important"
                            :priority "A")
                           (:priority<= "B"
@@ -201,6 +272,9 @@
                            ;; their order is unspecified, defaulting to 0. Sections
                            ;; are displayed lowest-number-first.
                            :order 1)
+                          (:name "Next"
+                           :todo "NEXT"
+                           :order 8)
                           (:name "Waiting"
                            :todo "WAIT"
                            :order 9)
@@ -236,19 +310,6 @@
             (define-key org-mode-map (kbd "C-c \" \"")
                         (lambda () (interactive) (org-zotxt-insert-reference-link '(4))))))
 
-(defun org-journal-save-entry-and-exit()
-  "Simple convenience function.
-      Saves the buffer of the current day's entry and kills the window
-      Similar to org-capture like behavior"
-  (interactive)
-  (save-buffer)
-  (kill-buffer-and-window))
-
-(add-hook 'org-journal-mode-hook
-          (lambda ()
-            (define-key org-journal-mode-map
-                        (kbd "C-x C-s") 'org-journal-save-entry-and-exit)))
-
 (setq org-capture-templates
       '(("n" "Notes" entry
          (file "~/org/inbox.org") "* %^{Description} %^g\n Added: %U\n%?")
@@ -279,17 +340,7 @@
         '(("d" "default" plain "%?"
            :immediate-finish t
            :if-new (file+head "${slug}.org"
-                              "#+TITLE: ${title}\n#+hugo_lastmod: Time-stamp: <>\n\n")
-           :unnarrowed t)
-          ("t" "temp" plain "%?"
-           :if-new(file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+TITLE: ${title}\n#+hugo_lastmod: Time-stamp: <>\n\n")
-           :immediate-finish t
-           :unnarrowed t)
-          ("p" "private" plain "%?"
-           :if-new (file+head "${slug}-private.org"
-                              "#+TITLE: ${title}\n")
-           :immediate-finish t
+                              "#+TITLE: ${title}\n#+lastmod: Time-stamp: <>\n\n")
            :unnarrowed t)))
   (defun org-roam-node-insert-immediate (arg &rest args)
     (interactive "P")
@@ -314,7 +365,6 @@
     (setq org-agenda-files (my/org-roam-list-notes-by-tag "Project")))
 
   ;; Build the agenda list the first time for the session
-  (my/org-roam-refresh-agenda-list)
 
   (defun my/org-roam-project-finalize-hook ()
     "Adds the captured project file to `org-agenda-files' if the
@@ -363,6 +413,8 @@ capture was not aborted."
                                                             "#+title: ${title}\n#+category: ${title}\n#+filetags: Project"
                                                             ("Tasks"))))))
 
+  (require 'org-roam-dailies)
+  (my/org-roam-refresh-agenda-list)
   (defun my/org-roam-copy-todo-to-today ()
     (interactive)
     (let ((org-refile-keep t) ;; Set this to nil to delete the original!
@@ -419,34 +471,115 @@ capture was not aborted."
         :desc "Capture yesterday"         "Y" #'org-roam-dailies-capture-yesterday
         :desc "Find directory"            "-" #'org-roam-dailies-find-directory)))
 
-(defun my/caldav-sync-perso ()
-  "Sync my local calendar in ~/org/calendar.org with my remote calendar"
-  (interactive)
-  (let ((org-caldav-inbox "~/org/cal_inbox.org")
-        (org-caldav-calendar-id "org")
-        (org-caldav-url "https://cld.hugocisneros.com/remote.php/dav/calendars/ncp/")
-        (org-caldav-files '("~/org/calendar.org")))
-    (call-interactively 'org-caldav-sync)))
 
-(setq org-journal-dir "~/org/dailies/")
-(setq org-journal-enable-encryption nil)
-
-(with-eval-after-load "ispell"
-  ;; (after! flyspell-lazy
-  ;;   (flyspell-lazy-mode -1))
-  (setq ispell-program-name "hunspell")
-  (setq ispell-dictionary "en_US,fr_FR")
-  ;; ispell-set-spellchecker-params has to be called
-  ;; before ispell-hunspell-add-multi-dic will work
-  (ispell-set-spellchecker-params)
-  (ispell-hunspell-add-multi-dic "en_US,fr_FR"))
 
 (add-hook 'before-save-hook 'time-stamp)
 
-(add-hook 'markdown-mode-hook 'my/buffer-face-mode-variable)
 (after! mu4e
   (setq org-contacts-files '("~/org/contacts.org"))
   (require 'org-contacts))
 (setq org-return-follows-link t)
 (setq org-mobile-directory "~/webdav")
 (setq org-journal-dir "/home/willefi/org/daily/")
+
+#+end_src
+
+#+RESULTS:
+: /home/willefi/org/daily/
+
+* Mail
+#+begin_src elisp
+;;; mu4e.el -*- lexical-binding: t; -*-
+(after! mu4e
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+  (setq mu4e-get-mail-command "mbsync -a")
+  (setq sendmail-program (executable-find "msmtp")
+        send-mail-function #'smtpmail-send-it
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-send-mail-function #'message-send-mail-with-sendmail)
+  ;; set a more visible mu4e view (with dark-mode enabled)
+  (setq shr-color-visible-luminance-min 60)
+  ;; use imagemagick, if available
+  (when (fboundp 'imagemagick-register-types)
+    (imagemagick-register-types))
+  (setq mu4e-use-fancy-chars t)
+  (setq
+   mu4e-headers-draft-mark     '("D" . "💈")
+   mu4e-headers-flagged-mark   '("F" . "📍")
+   mu4e-headers-new-mark       '("N" . "🔥")
+   mu4e-headers-passed-mark    '("P" . "❯")
+   mu4e-headers-replied-mark   '("R" . "❮")
+   mu4e-headers-seen-mark      '("S" . "☑")
+   mu4e-headers-trashed-mark   '("T" . "💀")
+   mu4e-headers-attach-mark    '("a" . "📎")
+   mu4e-headers-encrypted-mark '("x" . "🔒")
+   mu4e-headers-signed-mark    '("s" . "🔑")
+   mu4e-headers-unread-mark    '("u" . "⎕")
+   mu4e-headers-list-mark      '("l" . "🔈")
+   mu4e-headers-personal-mark  '("p" . "👨")
+   mu4e-headers-calendar-mark  '("c" . "📅"))
+  (setq mu4e-update-interval 60)
+  (setq mu4e-maildir-shortcuts
+        '( (:maildir "/INBOX" :key ?i)
+           (:maildir "/[Gmail]/Sent Mail"  :key ?S)
+           (:maildir "/[Gmail]/Trash" :key ?t)
+           (:maildir "/[Gmail]/Starred" :key ?s)
+           (:maildir "/[Gmail]/All Mail"   :key ?a)))
+
+  (add-to-list 'org-capture-templates
+               '("M" "Email Workflow"))
+  (add-to-list 'org-capture-templates
+               '("Mf" "Follow Up" entry (file+olp "~/org/Inbox.org" "Follow Up")
+                 "* TODO Follow up with %:fromname on %a\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n\n%i" :immediate-finish t))
+  (add-to-list 'org-capture-templates
+               '("Mr" "Read Later" entry (file+olp "~/org/Inbox.org" "Read Later")
+                 "* TODO Read %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n\n%a\n\n%i" :immediate-finish t))
+
+  (defun my/capture-mail-follow-up (msg)
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "Mf"))
+
+  (defun my/capture-mail-read-later (msg)
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "Mr"))
+
+  ;; Add custom actions for our capture templates
+  (add-to-list 'mu4e-headers-actions
+               '("follow up" . my/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-view-actions
+               '("follow up" . my/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-headers-actions
+               '("read later" . my/capture-mail-read-later) t)
+  (add-to-list 'mu4e-view-actions
+               '("read later" . my/capture-mail-read-later) t)
+  (setq org-msg-signature "\n\nRegards,\n\n\n--\n\n*Frédéric Willem*\n\n/One Emacs to rule them all/\n")
+  (autoload 'bbdb-insinuate-mu4e "bbdb-mu4e")
+  (bbdb-initialize 'message 'mu4e)
+
+  (setq bbdb-mail-user-agent 'mu4e-user-agent)
+  (setq mu4e-view-rendered-hook 'bbdb-mua-auto-update)
+  (setq mu4e-compose-complete-addresses nil)
+  (setq bbdb-mua-pop-up t)
+  (setq bbdb-mua-pop-up-window-size 5)
+  (setq mu4e-org-contacts-file "/home/willefi/org/contacts.org")
+  (add-to-list 'mu4e-headers-actions
+               '("org-contact-add" . mu4e-action-add-org-contact) t)
+  (add-to-list 'mu4e-view-actions
+               '("org-contact-add" . mu4e-action-add-org-contact) t))
+#+end_src
+* Java
+#+begin_src elisp
+(require 'lsp-java-boot)
+
+;; to enable the lenses
+(add-hook 'lsp-mode-hook #'lsp-lens-mode)
+(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+(setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
+                                         :path "/home/willefi/.sdkman/candidates/java/8.0.362-tem/")
+                                        (:name "JavaSE-11"
+                                         :path "/home/willefi/.sdkman/candidates/java/11.0.17-tem/"
+                                         :default t)])
+#+end_src

@@ -64,3 +64,5 @@
 (package! bbdb)
 (package! org-vcard)
 (package! org-roam-ui )
+(package! synosaurus)
+(package! org-ql)

@@ -93,7 +93,7 @@
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
-       lookup              ; navigate your code and its documentation
+       (lookup +dictionnary +offline +docsets)              ; navigate your code and its documentation
        (lsp +peek +lsp-ui)
        magit             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
@@ -183,5 +183,5 @@
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
-       ;; literate
+       literate
        (default +bindings +smartparens))

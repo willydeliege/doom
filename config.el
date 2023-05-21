@@ -1,21 +1,40 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
+
 (setq user-full-name "Frédéric Willem"
       user-mail-address "frederic.willem@gmail.com")
-;; set more convient *leader keys
-(custom-set-faces!
-  '(doom-dashboard-banner :foreground "red" :weight bold)
-  '(doom-dashboard-footer :inherit font-lock-constant-face)
-  '(doom-dashboard-footer-icon :inherit all-the-icons-red)
-  '(doom-dashboard-loaded :inherit font-lock-warning-face)
-  '(doom-dashboard-menu-desc :inherit font-lock-string-face)
-  '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
+
+(setq browse-url-browser-function 'browse-url-generic)
+(setq browse-url-generic-program  "google-chrome-stable")
+(setq browse-url-generic-args '("--incognito"))
+
+;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
+;; are the three important ones:
+
+;; + `doom-font'
+;; + `doom-variable-pitch-font'
+;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
+;;   presentations or streaming.
+;;
+;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
+;; font string. You generally only need these two:
+(setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "JetBrains Mono")
+      doom-big-font (font-spec :family "JetBrains Mono" :size 20))
+(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+      doom-themes-enable-italic t) ; if nil, italics is universally disabled
+;; There are two ways to load a theme. Both assume the theme is installed and
+;; available. You can either set `doom-theme' or manually load a theme with the
+;; `load-theme' function. This is the default:
+;; (load-theme 'leuven t)
+(setq display-line-numbers-type 'relative)
+
+(setq doom-theme 'doom-feather-dark)
+(custom-set-faces   '(default ((t (:background "#000000")))))
+
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 (defhydra doom-window-resize-hydra (:hint nil)
   "
              _k_ increase height
@@ -28,23 +47,16 @@ _h_ decrease width    _l_ increase width
   ("l" evil-window-increase-width)
 
   ("q" nil))
-
 (map!
  (:leader
   :desc "Hydra resize" :n "w SPC" #'doom-window-resize-hydra/body))
-;disable backup
-(setq backup-inhibited t)
-;disable auto save
-(setq auto-save-default nil)
 
-(custom-set-faces!
-  '(aw-leading-char-face
-    :foreground "white" :background "red"
-    :weight bold :height 2.5 :box (:line-width 10 :color "red")))
+;; mqke wihc-key non-truncated
+(setq which-key-allow-imprecise-window-fit nil)
+
 (setq doom-localleader-key ";")
 (setq doom-localleader-alt-key "M-;")
-(setq org-ellipsis " ")
-;; save when exit insert mode
+;; esc in insert mode save the file
 (add-hook 'evil-insert-state-exit-hook
           (lambda ()
             (call-interactively #'save-buffer)))
@@ -58,9 +70,9 @@ _h_ decrease width    _l_ increase width
     (indent-to indent)
     (evil-paste-after 1)
     (move-to-column column)))
-(map!  :desc "Paste above" :n "[p" #'my/paste-above)
+(map! :desc "Paste below" :n "]p" #'my/paste-below)
 (defun my/paste-below ()
-  "Paste below current line with preserving indentation."
+  "Paste above current line with preserving indentation."
   (interactive)
   (let ((indent (current-indentation))
         (column (current-column)))
@@ -68,61 +80,25 @@ _h_ decrease width    _l_ increase width
     (indent-to indent)
     (evil-paste-after 1)
     (move-to-column column)))
-(map! :desc "Paste below" :n "]p" #'my/paste-below)
-;; (which-key-setup-minibuffer)
-;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
-;; are the three important ones:
+(map! :desc "Paste below" :n "[p" #'my/paste-above)
+(map! :leader :desc "Capture" "X" #'org-roam-dailies-capture-today)
 
-;; + `doom-font'
-;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;;
-;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
-      doom-variable-pitch-font (font-spec :family "JetBrains Mono")
-      ;; doom-unicode-font (font-spec :family "JetBrains Mono")
-      doom-big-font (font-spec :family "JetBrains Mono" :size 19))
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-;; (load-theme 'leuven t)
-(setq doom-theme 'doom-ir-black)
+(setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+
+;; auto-save-mode doesn't create the path automatically!
+(make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
+
+(setq auto-save-list-file-prefix (expand-file-name "tmp/auto-saves/sessions/" user-emacs-directory)
+      auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves/" user-emacs-directory) t)))
+
+(setq create-lockfiles nil)
+
+(setq org-ellipsis " ")
+
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 (setq org-roam-directory "~/org/")
-
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers 'relative)
-(setq display-line-numbers-type 'relative)
-
-
-;; Here are some additional functions/macros that could help you configure Doom:
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
-(use-package! evil-surround
-  :config
-  (global-evil-surround-mode 1))
-
-
-;; (setq lsp-headerline-breadcrumb-enable t)
-;;
 
 ;; Prompt for local variables
 (setq-default enable-local-variables t)
@@ -130,15 +106,440 @@ _h_ decrease width    _l_ increase width
 
 ;; Scrolling done right
 (setq scroll-error-top-bottom t)
-(map! :leader :desc "Capture" "X" #'org-roam-dailies-capture-today)
 
 ;; Discover projects in the repo dir
 (after! projectile
   (setq projectile-project-search-path '(("~/repos" . 2))
         projectile-sort-order 'recentf ))
 
+(setq-default org-enforce-todo-dependencies nil)
+(after! org
+  (setq org-stuck-projects '("+Project/PROJ" ("NEXT" "WAIT") nil ""))
+  (setq org-todo-keywords
+        '((sequence
+           "TODO(t)"  ; A task that needs doing & is ready to do
+           "NEXT(n)"  ; The nex task in to perform in the project
+           "PROJ(p)"  ; A project, which usually contains other tasks
+           "WAIT(W@)"  ; Something external is holding up this task
+           "HOLD(H@)"  ; This task is paused/on hold because of me
+           "IDEA(i)"  ; An unconfirmed and unapproved task or notion
+           "|"
+           "DONE(d)"  ; Task successfully completed
+           "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
+          (sequence
+           "[ ](T)"   ; A task that needs doing
+           "[-](S)"   ; Task is in progress
+           "|"
+           "[X](D)")  ; Task was completed
+          (sequence
+           "READ(r)"
+           "WATCH(w)"))
+        org-todo-keyword-faces
+        '(("[-]"  . +org-todo-active)
+          ("NEXT"  . +org-todo-active)
+          ("WAIT" . +org-todo-onhold)
+          ("HOLD" . +org-todo-onhold)
+          ("PROJ" . +org-todo-project)
+          ("NO"   . +org-todo-cancel)
+          ("KILL" . +org-todo-cancel))))
+;; I don't wan't the keywords in my exports by default
+(setq-default org-export-with-todo-keywords nil)
+
+;; hide all the  * / _ chars
+(setq org-hide-emphasis-markers t)
+
+(setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-include-deadlines t
+      org-agenda-block-separator #x2501
+      org-agenda-compact-blocks t
+      org-agenda-start-with-log-mode t)
+(setq org-agenda-clockreport-parameter-plist
+      (quote (:link t :maxlevel 5 :fileskip0 t :compact t :narrow 80)))
+(setq org-agenda-deadline-faces
+      '((1.0001 . org-warning)              ; due yesterday or before
+        (0.0    . org-upcoming-deadline)))  ; due today or later
+
+(setq-default org-icalendar-include-todo t)
+(setq org-combined-agenda-icalendar-file "~/org/calendar.ics")
+(setq org-icalendar-combined-name "Hugo Org")
+(setq org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
+(setq org-icalendar-use-deadline '(todo-due event-if-todo event-if-not-todo))
+(setq org-icalendar-timezone "Europe/Paris")
+(setq org-icalendar-store-UID t)
+(setq org-icalendar-alarm-time 30)
+(setq french-holiday
+      '((holiday-fixed 1 1 "Jour de l'an")
+        (holiday-fixed 5 8 "Victoire 45")
+        (holiday-fixed 7 14 "Fête nationale")
+        (holiday-fixed 8 15 "Assomption")
+        (holiday-fixed 11 1 "Toussaint")
+        (holiday-fixed 11 11 "Armistice 18")
+        (holiday-easter-etc 1 "Lundi de Pâques")
+        (holiday-easter-etc 39 "Ascension")
+        (holiday-easter-etc 50 "Lundi de Pentecôte")
+        (holiday-fixed 1 6 "Épiphanie")
+        (holiday-fixed 2 2 "Chandeleur")
+        (holiday-fixed 2 14 "Saint Valentin")
+        (holiday-fixed 5 1 "Fête du travail")
+        (holiday-fixed 5 8 "Commémoration de la capitulation de l'Allemagne en 1945")
+        (holiday-fixed 6 21 "Fête de la musique")
+        (holiday-fixed 11 2 "Commémoration des fidèles défunts")
+        (holiday-fixed 12 25 "Noël")
+        ;; fêtes à date variable
+        (holiday-easter-etc 0 "Pâques")
+        (holiday-easter-etc 49 "Pentecôte")
+        (holiday-easter-etc -47 "Mardi gras")
+        (holiday-float 6 0 3 "Fête des pères") ;; troisième dimanche de juin
+        ;; Fête des mères
+        (holiday-sexp
+         '(if (equal
+               ;; Pentecôte
+               (holiday-easter-etc 49)
+               ;; Dernier dimanche de mai
+               (holiday-float 5 0 -1 nil))
+              ;; -> Premier dimanche de juin si coïncidence
+              (car (car (holiday-float 6 0 1 nil)))
+            ;; -> Dernier dimanche de mai sinon
+            (car (car (holiday-float 5 0 -1 nil))))
+         "Fête des mères")))
+(setq calendar-date-style 'european
+      holiday-other-holidays french-holiday
+      calendar-mark-holidays-flag t
+      calendar-week-start-day 1
+      calendar-mark-diary-entries-flag nil)
+
+(setq org-agenda-breadcrumbs-separator " ❱ "
+      org-agenda-current-time-string "⏰ ┈┈┈┈┈┈┈┈┈┈┈ now")
+
+(setq org-agenda-format-date (lambda (date) (concat "\n" (make-string (window-width) 9472)
+                                               "\n"
+                                               (org-agenda-format-date-aligned date))))
+(setq org-cycle-separator-lines 2)
+
+(setq org-agenda-custom-commands
+      '(("z" "My view"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-super-agenda-groups
+                       '((:name "Today"
+                          :time-grid t
+                          :date today
+                          :scheduled today
+                          :order 1)))))
+          (alltodo "" ((org-agenda-overriding-header "")
+                       (org-super-agenda-groups
+                        '(;; Each group has an implicit boolean OR operator between its selectors.
+                          (:name "Today"
+                           :deadline today
+                           :face (:background "black"))
+                          (:name "Passed deadline"
+                           :and (:deadline past :todo ("TODO" "WAIT" "HOLD" "NEXT"))
+                           :face (:background "#7f1b19"))
+                          (:name "Important"
+                           :priority "A")
+                          (:priority<= "B"
+                           ;; Show this section after "Today" and "Important", because
+                           ;; their order is unspecified, defaulting to 0. Sections
+                           ;; are displayed lowest-number-first.
+                           :order 1)
+                          (:name "Next"
+                           :todo "NEXT"
+                           :order 8)
+                          (:name "Waiting"
+                           :todo "WAIT"
+                           :order 9)
+                          (:name "On hold"
+                           :todo "HOLD"
+                           :order 10)))))))))
+(add-hook 'org-agenda-mode-hook 'org-super-agenda-mode)
+
+;; Resume clocking task when emacs is restarted
+(org-clock-persistence-insinuate)
+;; Show lot of clocking history so it's easy to pick items off the C-F11 list
+(setq org-clock-history-length 23)
+;; Resume clocking task on clock-in if the clock is open
+(setq org-clock-in-resume t)
+;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
+(setq org-clock-out-remove-zero-time-clocks t)
+;; Clock out when moving task to a done state
+(setq org-clock-out-when-done t)
+;; Save the running clock and all clock history when exiting Emacs, load it on startup
+(setq org-clock-persist t)
+;; Include current clocking task in clock reports
+(setq org-clock-report-include-clocking-task t)
+
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
+(add-hook 'org-mode-hook
+          (lambda ()
+            (setq fill-column 80)
+            (define-key org-mode-map (kbd "s-i") 'org-clock-in)
+            (define-key org-mode-map (kbd "s-o") 'org-clock-out)
+            (define-key org-mode-map (kbd "s-d") 'org-todo)
+            (define-key org-mode-map (kbd "M-+") 'text-scale-increase)
+            (define-key org-mode-map (kbd "M-°") 'text-scale-decrease)
+            (define-key org-mode-map (kbd "C-c \" \"")
+                        (lambda () (interactive) (org-zotxt-insert-reference-link '(4))))))
+
+(setq org-capture-templates
+      '(("n" "Notes" entry
+         (file "~/org/inbox.org") "* %^{Description} %^g\n Added: %U\n%?")
+        ("m" "Meeting notes" entry
+         (file "~/org/meetings.org") "* TODO %^{Title} %t\n- %?")
+        ("t" "TODO" entry
+         (file "~/org/inbox.org") "* TODO %^{Title}")
+        ("e" "Event" entry
+         (file "~/org/calendar.org") "* %^{Is it a todo?||TODO |NEXT }%^{Title}\n%^t\n%?")
+        ("w" "Work TODO" entry
+         (file "~/org/work.org") "* TODO %^{Title}")))
+
+(setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
+(setq org-refile-use-outline-path 'file)
+(setq org-refile-allow-creating-parent-nodes 'confirm)
+;; Org-roam config
+(with-eval-after-load 'org-roam
+  ;; Roam is always one level deep in my org-directory
+  (setq org-id-link-to-org-use-id t)
+  (setq org-roam-completion-system 'helm)
+  (add-to-list 'display-buffer-alist
+               '(("\\*org-roam\\*"
+                  (display-buffer-in-direction)
+                  (direction . right)
+                  (window-width . 0.33)
+                  (window-height . fit-window-to-buffer))))
+  (setq org-roam-capture-templates
+        '(("d" "default" plain "%?"
+           :immediate-finish t
+           :if-new (file+head "${slug}.org"
+                              "#+TITLE: ${title}\n#+lastmod: Time-stamp: <>\n\n")
+           :unnarrowed t)))
+  (defun org-roam-node-insert-immediate (arg &rest args)
+    (interactive "P")
+    (let ((args (push arg args))
+          (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                    '(:immediate-finish t)))))
+      (apply #'org-roam-node-insert args)))
+
+  (defun my/org-roam-filter-by-tag (tag-name)
+    (lambda (node)
+      (member tag-name (org-roam-node-tags node))))
+  ;; add inbox)
+
+  (defun my/org-roam-list-notes-by-tag (tag-name)
+    (mapcar #'org-roam-node-file
+            (seq-filter
+             (my/org-roam-filter-by-tag tag-name)
+             (org-roam-node-list))))
+
+  (defun my/org-roam-refresh-agenda-list ()
+    (interactive)
+    (setq org-agenda-files (my/org-roam-list-notes-by-tag "Project")))
+
+  ;; Build the agenda list the first time for the session
+
+  (defun my/org-roam-project-finalize-hook ()
+    "Adds the captured project file to `org-agenda-files' if the
+capture was not aborted."
+    ;; Remove the hook since it was added temporarily
+    (remove-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+
+    ;; Add project file to the agenda list if the capture was confirmed
+    (unless org-note-abort
+      (with-current-buffer (org-capture-get :buffer)
+        (add-to-list 'org-agenda-files (buffer-file-name)))))
+
+  (defun my/org-roam-find-project ()
+    (interactive)
+    ;; Add the project file to the agenda after capture is finished
+    (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+
+    ;; Select a project file to open, creating it if necessary
+    (org-roam-node-find
+     nil
+     nil
+     (my/org-roam-filter-by-tag "Project")
+     nil
+     :templates
+     '(("p" "project" plain "* Objective/Goal\n* Brainstorming\n* Tasks\n\n** TODO Initial task\n* Notes\n* Communication\n* Reference material\n"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+        :unnarrowed t))))
+
+  (defun my/org-roam-capture-inbox ()
+    (interactive)
+    (org-roam-capture- :node (org-roam-node-create)
+                       :templates '(("i" "inbox" plain "* %?"
+                                     :if-new (file+head "Inbox.org" "#+title: Inbox\n")))))
+
+  (defun my/org-roam-capture-task ()
+    (interactive)
+    ;; Add the project file to the agenda after capture is finished
+    (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+
+    ;; Capture the new task, creating the project file if necessary
+    (org-roam-capture- :node (org-roam-node-read
+                              nil
+                              (my/org-roam-filter-by-tag "Project"))
+                       :templates '(("p" "project" plain "** TODO %?"
+                                     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                                            "#+title: ${title}\n#+category: ${title}\n#+filetags: Project"
+                                                            ("Tasks"))))))
+
+  (require 'org-roam-dailies)
+  (my/org-roam-refresh-agenda-list)
+  (defun my/org-roam-copy-todo-to-today ()
+    (interactive)
+    (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+          (org-roam-dailies-capture-templates
+           '(("t" "tasks" entry "%?"
+              :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+          (org-after-refile-insert-hook #'save-buffer)
+          today-file
+          pos)
+      (save-window-excursion
+        (org-roam-dailies--capture (current-time) t)
+        (setq today-file (buffer-file-name))
+        (setq pos (point)))
+
+      ;; Only refile if the target file is different than the current file
+      (unless (equal (file-truename today-file)
+                     (file-truename (buffer-file-name)))
+        (org-refile nil nil (list "Tasks" today-file nil pos)))))
+
+  (add-to-list 'org-after-todo-state-change-hook
+               (lambda ()
+                 (when (equal org-state "DONE")
+                   (my/org-roam-copy-todo-to-today))))
+  (org-roam-db-autosync-mode)
+  )
+(setq org-id-extra-files (org-roam--list-files org-roam-directory))
+
+(map! :leader
+      :desc "Find roam node" "fn" #'org-roam-node-find)
+(map! :leader
+      :desc "Roam project" "pr" #'my/org-roam-find-project)
+(map! :leader
+      (:prefix ("r" . "roam")
+       :desc "Open random node"           "a" #'org-roam-node-random
+       :desc "Find node"                  "f" #'org-roam-node-find
+       :desc "Find ref"                   "F" #'org-roam-ref-find
+       :desc "Show graph"                 "g" #'org-roam-graph
+       :desc "Insert node"                "i" #'org-roam-node-insert
+       :desc "Capture to node"            "n" #'org-roam-capture
+       :desc "Toggle roam buffer"         "r" #'org-roam-buffer-toggle
+       :desc "Launch roam buffer"         "R" #'org-roam-buffer-display-dedicated
+       :desc "Sync database"              "s" #'org-roam-db-sync
+       (:prefix ("d" . "by date")
+        :desc "Goto previous note"        "b" #'org-roam-dailies-goto-previous-note
+        :desc "Goto date"                 "d" #'org-roam-dailies-goto-date
+        :desc "Capture date"              "D" #'org-roam-dailies-capture-date
+        :desc "Goto next note"            "f" #'org-roam-dailies-goto-next-note
+        :desc "Goto tomorrow"             "m" #'org-roam-dailies-goto-tomorrow
+        :desc "Capture tomorrow"          "M" #'org-roam-dailies-capture-tomorrow
+        :desc "Capture today"             "n" #'org-roam-dailies-capture-today
+        :desc "Goto today"                "t" #'org-roam-dailies-goto-today
+        :desc "Capture today"             "T" #'org-roam-dailies-capture-today
+        :desc "Goto yesterday"            "y" #'org-roam-dailies-goto-yesterday
+        :desc "Capture yesterday"         "Y" #'org-roam-dailies-capture-yesterday
+        :desc "Find directory"            "-" #'org-roam-dailies-find-directory)))
 
 
-(after! tramp (setenv "SHELL" "/usr/local/bin/fish"))
-(after! org (load! "org-config.el"))
-(load! "mu4e.el")
+
+(add-hook 'before-save-hook 'time-stamp)
+
+(after! mu4e
+  (setq org-contacts-files '("~/org/contacts.org"))
+  (require 'org-contacts))
+(setq org-return-follows-link t)
+(setq org-mobile-directory "~/webdav")
+(setq org-journal-dir "/home/willefi/org/daily/")
+
+;;; mu4e.el -*- lexical-binding: t; -*-
+(after! mu4e
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+  (setq mu4e-get-mail-command "mbsync -a")
+  (setq sendmail-program (executable-find "msmtp")
+        send-mail-function #'smtpmail-send-it
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-send-mail-function #'message-send-mail-with-sendmail)
+  ;; set a more visible mu4e view (with dark-mode enabled)
+  (setq shr-color-visible-luminance-min 60)
+  ;; use imagemagick, if available
+  (when (fboundp 'imagemagick-register-types)
+    (imagemagick-register-types))
+  (setq mu4e-use-fancy-chars t)
+  (setq
+   mu4e-headers-draft-mark     '("D" . "💈")
+   mu4e-headers-flagged-mark   '("F" . "📍")
+   mu4e-headers-new-mark       '("N" . "🔥")
+   mu4e-headers-passed-mark    '("P" . "❯")
+   mu4e-headers-replied-mark   '("R" . "❮")
+   mu4e-headers-seen-mark      '("S" . "☑")
+   mu4e-headers-trashed-mark   '("T" . "💀")
+   mu4e-headers-attach-mark    '("a" . "📎")
+   mu4e-headers-encrypted-mark '("x" . "🔒")
+   mu4e-headers-signed-mark    '("s" . "🔑")
+   mu4e-headers-unread-mark    '("u" . "⎕")
+   mu4e-headers-list-mark      '("l" . "🔈")
+   mu4e-headers-personal-mark  '("p" . "👨")
+   mu4e-headers-calendar-mark  '("c" . "📅"))
+  (setq mu4e-update-interval 60)
+  (setq mu4e-maildir-shortcuts
+        '( (:maildir "/INBOX" :key ?i)
+           (:maildir "/[Gmail]/Sent Mail"  :key ?S)
+           (:maildir "/[Gmail]/Trash" :key ?t)
+           (:maildir "/[Gmail]/Starred" :key ?s)
+           (:maildir "/[Gmail]/All Mail"   :key ?a)))
+
+  (add-to-list 'org-capture-templates
+               '("M" "Email Workflow"))
+  (add-to-list 'org-capture-templates
+               '("Mf" "Follow Up" entry (file+olp "~/org/Inbox.org" "Follow Up")
+                 "* TODO Follow up with %:fromname on %a\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n\n%i" :immediate-finish t))
+  (add-to-list 'org-capture-templates
+               '("Mr" "Read Later" entry (file+olp "~/org/Inbox.org" "Read Later")
+                 "* TODO Read %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n\n%a\n\n%i" :immediate-finish t))
+
+  (defun my/capture-mail-follow-up (msg)
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "Mf"))
+
+  (defun my/capture-mail-read-later (msg)
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "Mr"))
+
+  ;; Add custom actions for our capture templates
+  (add-to-list 'mu4e-headers-actions
+               '("follow up" . my/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-view-actions
+               '("follow up" . my/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-headers-actions
+               '("read later" . my/capture-mail-read-later) t)
+  (add-to-list 'mu4e-view-actions
+               '("read later" . my/capture-mail-read-later) t)
+  (setq org-msg-signature "\n\nRegards,\n\n\n--\n\n*Frédéric Willem*\n\n/One Emacs to rule them all/\n")
+  (autoload 'bbdb-insinuate-mu4e "bbdb-mu4e")
+  (bbdb-initialize 'message 'mu4e)
+
+  (setq bbdb-mail-user-agent 'mu4e-user-agent)
+  (setq mu4e-view-rendered-hook 'bbdb-mua-auto-update)
+  (setq mu4e-compose-complete-addresses nil)
+  (setq bbdb-mua-pop-up t)
+  (setq bbdb-mua-pop-up-window-size 5)
+  (setq mu4e-org-contacts-file "/home/willefi/org/contacts.org")
+  (add-to-list 'mu4e-headers-actions
+               '("org-contact-add" . mu4e-action-add-org-contact) t)
+  (add-to-list 'mu4e-view-actions
+               '("org-contact-add" . mu4e-action-add-org-contact) t))
+
+(require 'lsp-java-boot)
+
+;; to enable the lenses
+(add-hook 'lsp-mode-hook #'lsp-lens-mode)
+(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+(setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
+                                         :path "/home/willefi/.sdkman/candidates/java/8.0.362-tem/")
+                                        (:name "JavaSE-11"
+                                         :path "/home/willefi/.sdkman/candidates/java/11.0.17-tem/"
+                                         :default t)])
